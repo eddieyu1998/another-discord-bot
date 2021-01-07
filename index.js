@@ -49,6 +49,11 @@ client.on("message", (message) => {
     console.log(message.content)
 })
 
+process.on("uncaughtException", (err) => {
+    console.error("There was an uncaught error", err)
+    process.exit(1)
+})
+
 client.login(process.env.TOKEN)
 
 /*
