@@ -33,7 +33,9 @@ exports.handler = function (argv) {
     execute(argv)
 }
 
-function execute(argv) {}
+function execute(argv) {
+    console.log(argv)
+}
 
 /*
 command examples

@@ -16,3 +16,5 @@ function allowExecute(argv, guildOnly) {
 
     return true
 }
+
+module.exports = { allowExecute }
