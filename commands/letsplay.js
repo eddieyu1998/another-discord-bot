@@ -59,12 +59,20 @@ async function execute(argv) {
 
         const guildId = argv.message.guild.id
         await addLobby(lobby, guildId)
+        const lobbyMessage = await argv.message.channel.send(newLobbyMessage(argv.message, lobby))
+        lobbyMessage.react("✅")
     } catch (err) {
         argv.message.reply(err.message)
     }
 }
 
-function constructGameMessage(game) {}
+function newLobbyMessage(message, lobby) {
+    const game = lobby.game ? `**${lobby.game}**` : "any games"
+    const player = lobby.player ? `**${lobby.player.display}**` : "any number of"
+    const deadline = lobby.at ? `at **${lobby.at.display}**` : ""
+    const response = `${message.author} wants to play ${game} with ${player} players ${deadline}. React to this message to join. @everyone`
+    return response
+}
 
 // A function to add the new lobby to the guild file
 async function addLobby(lobby, guildId) {
@@ -93,6 +101,7 @@ function parseGame(gameOption) {
 
 /**
  * @typedef {Object} Player
+ * @property {string} display
  * @property {number} exact
  * @property {number} min
  * @property {number} max
@@ -130,6 +139,7 @@ function parsePlayer(playerOption) {
         // e.g. 4
         player.exact = parseInt(match[1])
     }
+    player.display = playerOption
     return player
 }
 
