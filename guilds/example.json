@@ -2,7 +2,7 @@
     "lobbies": [
         {
             "game": "Game1",
-            "player": { "min": 4, "max": 8 },
+            "player": { "display": "4-8", "min": 4, "max": 8 },
             "at": { "display": "23:30", "deadline": 1610062209768 },
             "calledAt": 1610062109768,
             "status": "waiting",
