@@ -1,6 +1,10 @@
-const { Message } = require("discord.js")
-const { parse } = require("yargs")
+const fs = require("fs")
+const { parse } = require("path")
+const util = require("util")
 const { allowExecute } = require("../common")
+const readFile = util.promisify(fs.readFile)
+const writeFile = util.promisify(fs.writeFile)
+
 const guildOnly = true
 
 exports.command = "/letsplay [game] [player] [at]"
@@ -14,16 +18,19 @@ exports.builder = {
         requiresArg: true,
         nargs: 1, // currently support only 1 game
         describle: "",
+        type: "string",
     },
     player: {
         requiresArg: true,
         nargs: 1,
         describle: "",
+        type: "string",
     },
     at: {
         requiresArg: true,
         narg: 1,
         describle: "",
+        type: "string",
     },
 }
 
@@ -35,14 +42,48 @@ exports.handler = function (argv) {
     execute(argv)
 }
 
-function execute(argv) {
+async function execute(argv) {
     console.log(argv)
     try {
-        const game = argv.game ? parseGame(argv.game) : null
+        const gameName = argv.game ? parseGame(argv.game) : null
         const player = argv.player ? parsePlayer(argv.player) : null
         const at = argv.at ? parseAt(argv.at) : null
+
+        const lobby = {}
+        if (argv.game) lobby.game = parseGame(argv.game)
+        if (argv.player) lobby.player = parsePlayer(argv.player)
+        if (argv.at) lobby.at = parseAt(argv.at)
+        lobby.calledAt = Date.now()
+        lobby.status = "waiting"
+        lobby.participants = []
+
+        const guildId = argv.message.guild.id
+        await addLobby(lobby, guildId)
     } catch (err) {
         argv.message.reply(err.message)
+    }
+}
+
+function constructGameMessage(game) {}
+
+// A function to add the new lobby to the guild file
+async function addLobby(lobby, guildId) {
+    try {
+        const guildFile = await readFile(`./guilds/${guildId}.json`)
+        const guild = JSON.parse(guildFile)
+        guild["lobbies"].push(lobby)
+        const data = JSON.stringify(guild)
+        await writeFile(`./guilds/${guildId}.json`, data)
+    } catch (err) {
+        if (err.code === "ENOENT") {
+            // guild file not exist yet
+            let guild = { lobbies: [lobby] }
+            let data = JSON.stringify(guild)
+            await writeFile(`./guilds/${guildId}.json`, data)
+            return
+        }
+        console.error(err)
+        throw new Error("Error creating lobby, please try again later")
     }
 }
 
