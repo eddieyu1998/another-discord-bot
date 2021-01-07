@@ -70,7 +70,7 @@ function newLobbyMessage(message, lobby) {
     const game = lobby.game ? `**${lobby.game}**` : "any games"
     const player = lobby.player ? `**${lobby.player.display}**` : "any number of"
     const deadline = lobby.at ? `at **${lobby.at.display}**` : ""
-    const response = `${message.author} wants to play ${game} with ${player} players ${deadline}. React to this message to join. @everyone`
+    const response = `${message.author} wants to play ${game} with ${player} players ${deadline}. React below to join. @everyone`
     return response
 }
 
