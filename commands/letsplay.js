@@ -57,10 +57,14 @@ async function execute(argv) {
         lobby.status = "waiting"
         lobby.participants = []
 
-        const guildId = argv.message.guild.id
-        await addLobby(lobby, guildId)
         const lobbyMessage = await argv.message.channel.send(newLobbyMessage(argv.message, lobby))
         lobbyMessage.react("✅")
+
+        // await reaction
+
+        const guildId = argv.message.guild.id
+        lobby.id = lobbyMessage.id
+        await addLobby(lobby, guildId)
     } catch (err) {
         argv.message.reply(err.message)
     }
@@ -91,7 +95,8 @@ async function addLobby(lobby, guildId) {
             return
         }
         console.error(err)
-        throw new Error("Error creating lobby, please try again later")
+        // this error will now be thrown after the lobby message, don't confuse the user
+        // throw new Error("Error creating lobby, please try again later")
     }
 }
 
