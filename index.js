@@ -4,7 +4,7 @@ const yargs = require("yargs").commandDir("commands").demandCommand(1).help(fals
 //.showHelpOnFail(false)    // suppress console message
 //.exitProcess(false)   // do not need when callback provided to parse()
 
-const client = new Discord.Client()
+const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] })
 
 // a function to parse the command
 function parseCommand(yargs, message) {
