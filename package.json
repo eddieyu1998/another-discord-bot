@@ -7,6 +7,11 @@
         "dev": "nodemon ./index",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "nodemonConfig": {
+        "ignore": [
+            "guilds/*"
+        ]
+    },
     "author": "",
     "license": "ISC",
     "dependencies": {
