@@ -1,3 +1,6 @@
+const { allowExecute } = require("../common")
+const guildOnly = true
+
 exports.command = "/letsplay [game] [player] [at]"
 
 exports.aliases = "/p"
@@ -24,6 +27,10 @@ exports.builder = {
 
 exports.handler = function (argv) {
     // handler called when command parsed
+    if (!allowExecute(argv, guildOnly)) {
+        return
+    }
+    execute(argv)
 }
 
 function execute(argv) {}
