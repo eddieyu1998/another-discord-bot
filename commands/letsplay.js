@@ -95,7 +95,7 @@ function parsePlayer(playerOption) {
 /**
  * @typedef {Object} At
  * @property {string} display
- * @property {Date} deadline
+ * @property {number} deadline - deadline in unix epoch
  */
 /**
  * A function to parse the at option
@@ -129,7 +129,7 @@ function parseAt(atOption) {
     if (deadline < new Date()) {
         deadline.setDate(deadline.getDate() + 1)
     }
-    at.deadline = deadline
+    at.deadline = deadline.getTime()
     return at
 }
 
