@@ -60,6 +60,12 @@ functions:
 
 1. /letsplay: Matchmaking
 
+2. /extend: extend deadline of a current lobby
+
+3. /cancel: cancel a current lobby
+
+4. server game list
+
 required supporting functionality:
 
 set server time zone
