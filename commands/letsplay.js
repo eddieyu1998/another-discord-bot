@@ -94,7 +94,7 @@ function collectReaction(message, timeRemain, player) {
 
     const collectorOption = {}
     collectorOption.time = timeRemain ? Math.max(timeRemain, 5000) : defaultExpire
-    if (player && player.max) collectionOption.max = player.max
+    if (player && player.max) collectorOption.max = player.max
     const collector = message.createReactionCollector(filter, collectorOption)
 
     collector.on("collect", (reaction, user) => {
