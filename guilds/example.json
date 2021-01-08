@@ -1,0 +1,28 @@
+{
+    "lobbies": [
+        {
+            "id": "791642897928683524",
+            "game": "Game1",
+            "player": { "display": "4-8", "min": 4, "max": 8 },
+            "at": { "display": "23:30", "deadline": 1610062209768 },
+            "calledAt": 1610062109768,
+            "status": "waiting",
+            "participants": []
+        },
+        {
+            "id": "791642897928683525",
+            "game": "Game2",
+            "calledAt": 1610062109768,
+            "status": "playing",
+            "participants": ["796772215491526687", "796772215491526688"]
+        },
+        {
+            "id": "791642897928683526",
+            "game": "Game3",
+            "at": { "display": "23:30", "deadline": 1610062109768 },
+            "status": "expired",
+            "calledAt": 1610062009768,
+            "participants": []
+        }
+    ]
+}

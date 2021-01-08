@@ -1,15 +1,22 @@
 {
     "name": "another-discord-bot",
-    "version": "0.1.0",
-    "description": "",
+    "version": "1.0.0",
+    "description": "Yet another discord bot",
     "main": "index.js",
     "scripts": {
         "dev": "nodemon ./index",
+        "prod": "node ./index",
         "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "guilds/*"
+        ]
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "date-fns-tz": "^1.0.12",
         "discord.js": "^12.5.1",
         "dotenv": "^8.2.0",
         "yargs": "^16.2.0"
