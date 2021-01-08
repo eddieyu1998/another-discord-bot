@@ -59,6 +59,9 @@ async function execute(argv) {
 
         // TODO: create scheduled reminder?
         const timeRemain = lobby.at ? lobby.at.deadline - utcToZonedTime(new Date(), process.env.TZ) : null
+
+        console.log(lobby)
+
         collectReaction(lobbyMessage, timeRemain, lobby.player)
 
         const guildId = argv.message.guild.id
@@ -88,16 +91,19 @@ function isPlayerEnough(player, current) {
 }
 
 function collectReaction(message, timeRemain, player) {
+    console.log("player: " + player)
+    console.log("time remain: " + timeRemain)
+
     const filter = (reaction, user) => {
         return reaction.emoji.name === "✅"
     }
 
     const collectorOption = {}
     collectorOption.time = timeRemain ? Math.max(timeRemain, 5000) : defaultExpire
-    if (player && player.max) collectorOption.max = player.max
     const collector = message.createReactionCollector(filter, collectorOption)
 
     collector.on("collect", (reaction, user) => {
+        console.log("collected: ", reaction.emoji.name)
         // check if enough people, and ask if force start
         if (player && isPlayerEnough(player, reaction.count - 1)) {
             // TODO: ask for early start (once ask once)
@@ -105,6 +111,7 @@ function collectReaction(message, timeRemain, player) {
     })
 
     collector.on("end", async (collected) => {
+        console.log("collection ended: ", collected.reason)
         // TODO: implement startGame() and isGameStarted()
         if (false && isGameStarted()) {
             return
