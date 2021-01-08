@@ -59,8 +59,6 @@ async function execute(argv) {
 
         // TODO: create scheduled reminder?
         const timeRemain = lobby.at ? lobby.at.deadline - utcToZonedTime(new Date(), process.env.TZ) : null
-        console.log(lobby)
-        console.log(timeRemain)
         collectReaction(lobbyMessage, timeRemain, lobby.player)
 
         const guildId = argv.message.guild.id
