@@ -27,7 +27,7 @@ function parseCommand(yargs, message) {
 }
 
 client.once("ready", () => {
-    console.log("Bot Ready!")
+    console.log(`Bot Ready! Current default timezone: ${process.env.TZ}`)
 })
 
 client.on("message", (message) => {
@@ -45,8 +45,6 @@ client.on("message", (message) => {
             console.error(err)
             message.reply("Error parsing command")
         })
-
-    console.log(message.content)
 })
 
 process.on("uncaughtException", (err) => {
@@ -61,11 +59,14 @@ functions:
 
 1. /letsplay: Matchmaking
 
-
-
-
 required supporting functionality:
 
 set server time zone
 /timezone +8
+
+prevent user double join
+
+game end (voice channel) detection
+
+guild file loading on bot start up + cleaning up expired/ended game sessions
 */

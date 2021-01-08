@@ -1,5 +1,6 @@
 const fs = require("fs")
 const util = require("util")
+const { utcToZonedTime } = require("date-fns-tz")
 const { allowExecute } = require("../common")
 const readFile = util.promisify(fs.readFile)
 const writeFile = util.promisify(fs.writeFile)
@@ -49,7 +50,7 @@ async function execute(argv) {
         if (argv.game) lobby.game = parseGame(argv.game)
         if (argv.player) lobby.player = parsePlayer(argv.player)
         if (argv.at) lobby.at = parseAt(argv.at)
-        lobby.calledAt = Date.now()
+        lobby.calledAt = utcToZonedTime(new Date(), process.env.TZ)
         lobby.status = "waiting"
         lobby.participants = []
 
@@ -57,7 +58,9 @@ async function execute(argv) {
         lobbyMessage.react("✅")
 
         // TODO: create scheduled reminder?
-        const timeRemain = lobby.at ? lobby.at.deadline - Date.now() : null
+        const timeRemain = lobby.at ? lobby.at.deadline - utcToZonedTime(new Date(), process.env.TZ) : null
+        console.log(lobby)
+        console.log(timeRemain)
         collectReaction(lobbyMessage, timeRemain, lobby.player)
 
         const guildId = argv.message.guild.id
@@ -94,7 +97,7 @@ function collectReaction(message, timeRemain, player) {
     const collectorOption = {}
     collectorOption.time = timeRemain ? Math.max(timeRemain, 5000) : defaultExpire
     if (player && player.max) collectionOption.max = player.max
-    const collector = message.createReactionCollector(filter, { time: 3000 })
+    const collector = message.createReactionCollector(filter, collectorOption)
 
     collector.on("collect", (reaction, user) => {
         // check if enough people, and ask if force start
@@ -252,10 +255,10 @@ function parseAt(atOption) {
     }
     const at = {}
     at.display = hour.padStart(2, "0") + ":" + (minute ? minute : "00")
-    let deadline = new Date()
+    let deadline = utcToZonedTime(new Date(), process.env.TZ)
     deadline.setHours(hour)
     deadline.setMinutes(minute)
-    if (deadline < new Date()) {
+    if (deadline < utcToZonedTime(new Date(), process.env.TZ)) {
         deadline.setDate(deadline.getDate() + 1)
     }
     at.deadline = deadline.getTime()
