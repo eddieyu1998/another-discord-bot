@@ -28,6 +28,7 @@ function parseCommand(yargs, message) {
 
 client.once("ready", () => {
     console.log(`Bot Ready! Current default timezone: ${process.env.TZ}`)
+    client.user.setActivity("/help", { type: "LISTENING" })
 })
 
 client.on("message", (message) => {
