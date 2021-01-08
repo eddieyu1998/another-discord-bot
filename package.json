@@ -1,10 +1,11 @@
 {
     "name": "another-discord-bot",
-    "version": "0.1.0",
-    "description": "",
+    "version": "1.0.0",
+    "description": "Yet another discord bot",
     "main": "index.js",
     "scripts": {
         "dev": "nodemon ./index",
+        "prod": "node ./index",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "nodemonConfig": {
