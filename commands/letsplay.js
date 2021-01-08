@@ -200,14 +200,14 @@ function parsePlayer(playerOption) {
     const re = /^([1-9]\d*)(\+|-([1-9]\d*))?$/
     const match = playerOption.match(re)
     if (!match) {
-        throw new Error("Unsupported format for option [player]")
+        throw new Error(`Invalid option for player number: ${playerOption}`)
     }
     // for playerOption "1-9" match return [ '1-9', '1', '-9', '9', index: 0, input: '1-9', groups: undefined ]
     const player = {}
     if (match[3]) {
         // e.g. 1-9
         if (parseInt(match[3]) <= parseInt(match[1])) {
-            throw new Error("Invalid player number")
+            throw new Error(`Invalid option for player number: ${playerOption}`)
         }
         player.min = parseInt(match[1])
         player.max = parseInt(match[3])
@@ -240,7 +240,7 @@ function parseAt(atOption) {
     const re = /^(\d{1,2}):?(\d{2})?$/
     const match = atOption.match(re)
     if (!match) {
-        throw new Error("Unsupported format for option [at]")
+        throw new Error(`Invalid option for at time: ${atOption}`)
     }
     let hour = null,
         minute = null
@@ -249,7 +249,7 @@ function parseAt(atOption) {
         minute = match[2]
     }
     if (parseInt(hour) >= 24 || (minute && parseInt(minute) >= 60)) {
-        throw new Error("Invalid time value")
+        throw new Error(`Invalid option for at time: ${atOption}`)
     }
     const at = {}
     at.display = hour.padStart(2, "0") + ":" + (minute ? minute : "00")
