@@ -1,5 +1,5 @@
 const dateFnsTz = require("date-fns-tz")
-const { parsePlayer, parseAt, createLobby } = require("../commands/letsplay")
+const { parsePlayer, parseAt, getTimeRemain } = require("../commands/letsplay")
 
 // test for parsePlayer function
 describe("parsePlayer", () => {
@@ -163,11 +163,26 @@ describe("parseAt", () => {
     })
 })
 
-// test for createLobby function
-describe("createLobby", () => {
-    test("lobby", () => {
-        const lobby = createLobby({ game: "Among Us", player: "5+", at: "2200" })
-        console.log(lobby)
-        expect(1).toBe(1)
+describe("getTimeRemain", () => {
+    const constantDate = new Date(1610265600000) // 2021-01-10T08:00:00.000Z
+
+    test("no deadline given (24 hours default)", () => {
+        expect(getTimeRemain({}, 1610265600000, 86400000)).toBe(86400000)
+    })
+
+    test("deadline before current (expires in 5 seconds)", () => {
+        expect(getTimeRemain({ at: { deadline: 1610265500000 } }, 1610265600000, 86400000)).toBe(5000)
+    })
+
+    test("1 minute expire time", () => {
+        expect(getTimeRemain({ at: { deadline: 1610265660000 } }, 1610265600000, 86400000)).toBe(60000)
+    })
+
+    test("1 hour expire time", () => {
+        expect(getTimeRemain({ at: { deadline: 1610269200000 } }, 1610265600000, 86400000)).toBe(3600000)
+    })
+
+    test("23 hours 59 mins expire time", () => {
+        expect(getTimeRemain({ at: { deadline: 1610351940000 } }, 1610265600000, 86400000)).toBe(86340000)
     })
 })
