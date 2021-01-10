@@ -286,4 +286,4 @@ function parseAt(atOption, timezone, utcToZoned, zonedToUtc) {
     return at
 }
 
-module.exports = { command, aliases, describe, builder, handler, createLobby, parseGame, parsePlayer, parseAt }
+module.exports = { command, aliases, describe, builder, handler, parseGame, parsePlayer, parseAt }

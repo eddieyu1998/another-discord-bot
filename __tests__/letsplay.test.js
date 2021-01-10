@@ -162,3 +162,12 @@ describe("parseAt", () => {
         })
     })
 })
+
+// test for createLobby function
+describe("createLobby", () => {
+    test("lobby", () => {
+        const lobby = createLobby({ game: "Among Us", player: "5+", at: "2200" })
+        console.log(lobby)
+        expect(1).toBe(1)
+    })
+})
