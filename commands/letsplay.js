@@ -1,6 +1,6 @@
 const fs = require("fs")
 const util = require("util")
-const { utcToZonedTime } = require("date-fns-tz")
+const { utcToZonedTime, zonedTimeToUtc } = require("date-fns-tz")
 const { allowExecute } = require("../common")
 const readFile = util.promisify(fs.readFile)
 const writeFile = util.promisify(fs.writeFile)
@@ -73,7 +73,7 @@ exports.createLobby = function (argv) {
     lobby.id = lobbyMessage.id
     if (argv.game) lobby.game = parseGame(argv.game)
     if (argv.player) lobby.player = parsePlayer(argv.player)
-    if (argv.at) lobby.at = parseAt(argv.at, process.env.TZ)
+    if (argv.at) lobby.at = parseAt(argv.at, process.env.TZ, utcToZonedTime, zonedTimeToUtc)
     lobby.calledAt = utcToZonedTime(new Date(), process.env.TZ)
     lobby.status = "waiting"
     lobby.participants = []
@@ -251,11 +251,11 @@ exports.parsePlayer = function (playerOption) {
  * supported format (in 24-hour):
  * H:mm / HH:mm / HHmm / Hmm / HH / H
  */
-exports.parseAt = function (atOption, timezone) {
+exports.parseAt = function (atOption, timezone, utcToZoned, zonedToUtc) {
     const re = /^(\d{1,2}):?(\d{2})?$/
     const match = atOption.match(re)
     if (!match) {
-        throw new Error(`Invalid option for at time: ${atOption}`)
+        throw new Error(`Invalid option for deadline at: ${atOption}`)
     }
     let hour = null,
         minute = null
@@ -264,17 +264,25 @@ exports.parseAt = function (atOption, timezone) {
         minute = match[2]
     }
     if (parseInt(hour) >= 24 || (minute && parseInt(minute) >= 60)) {
-        throw new Error(`Invalid option for at time: ${atOption}`)
+        throw new Error(`Invalid option for deadline at: ${atOption}`)
     }
     const at = {}
     at.display = hour.padStart(2, "0") + ":" + (minute ? minute : "00")
-    let deadline = utcToZonedTime(new Date(), timezone)
-    deadline.setHours(hour)
-    deadline.setMinutes(minute)
-    if (deadline < utcToZonedTime(new Date(), timezone)) {
-        deadline.setDate(deadline.getDate() + 1)
+
+    // create a new Date object with guild timezone
+    const zonedDate = utcToZoned(new Date(), timezone)
+    // increment date if current time passed given time
+    if (hour < zonedDate.getHours() || (hour === zonedDate.getHours() && minute <= zonedDate.getMinutes())) {
+        zonedDate.setDate(zonedDate.getDate() + 1)
     }
-    at.deadline = deadline.getTime()
+    zonedDate.setHours(hour)
+    zonedDate.setMinutes(minute)
+    zonedDate.setSeconds(0)
+    zonedDate.setMilliseconds(0)
+
+    // convert back to server timezone
+    const utcDeadline = zonedToUtc(zonedDate, timezone)
+    at.deadline = utcDeadline.getTime()
     return at
 }
 
