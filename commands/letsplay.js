@@ -60,6 +60,7 @@ async function execute(argv) {
         collectReaction(lobbyMessage, timeRemain, lobby.player)
 
         lobby.id = lobbyMessage.id
+        lobby.channelId = argv.message.channel.id
         const guildId = argv.message.guild.id
         // save lobby details to guild file
         await addLobby(lobby, guildId)
@@ -69,7 +70,6 @@ async function execute(argv) {
 }
 
 function createLobby(argv) {
-    // channelId needed
     const lobby = {}
     if (argv.game) lobby.game = parseGame(argv.game)
     if (argv.player) lobby.player = parsePlayer(argv.player)
