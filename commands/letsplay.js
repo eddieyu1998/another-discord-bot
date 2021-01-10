@@ -56,7 +56,7 @@ async function execute(argv) {
 
         // TODO: create scheduled reminder?
         // collect reaction
-        const timeRemain = lobby.at ? lobby.at.deadline - utcToZonedTime(new Date(), process.env.TZ) : null
+        const timeRemain = getTimeRemain(lobby, new Date().getTime(), defaultExpire)
         collectReaction(lobbyMessage, timeRemain, lobby.player)
 
         lobby.id = lobbyMessage.id
@@ -67,6 +67,11 @@ async function execute(argv) {
     } catch (err) {
         argv.message.reply(err.message)
     }
+}
+
+// extract -> lobby.
+function getTimeRemain(lobby, current, defaultExpire) {
+    return lobby.at ? Math.max(lobby.at.deadline - current, 5000) : defaultExpire
 }
 
 function createLobby(argv) {
@@ -107,7 +112,7 @@ function collectReaction(message, timeRemain, player) {
     }
 
     const collectorOption = {}
-    collectorOption.time = timeRemain ? Math.max(timeRemain, 5000) : defaultExpire
+    collectorOption.time = timeRemain
     const collector = message.createReactionCollector(filter, collectorOption)
 
     collector.on("collect", (reaction, user) => {
@@ -286,4 +291,4 @@ function parseAt(atOption, timezone, utcToZoned, zonedToUtc) {
     return at
 }
 
-module.exports = { command, aliases, describe, builder, handler, parseGame, parsePlayer, parseAt }
+module.exports = { command, aliases, describe, builder, handler, parseGame, parsePlayer, parseAt, getTimeRemain }
