@@ -59,6 +59,8 @@ async function execute(argv) {
         const timeRemain = lobby.at ? lobby.at.deadline - utcToZonedTime(new Date(), process.env.TZ) : null
         collectReaction(lobbyMessage, timeRemain, lobby.player)
 
+        lobby.id = lobbyMessage.id
+        const guildId = argv.message.guild.id
         // save lobby details to guild file
         await addLobby(lobby, guildId)
     } catch (err) {
@@ -68,13 +70,11 @@ async function execute(argv) {
 
 exports.createLobby = function (argv) {
     // channelId needed
-    const guildId = argv.message.guild.id
     const lobby = {}
-    lobby.id = lobbyMessage.id
     if (argv.game) lobby.game = parseGame(argv.game)
     if (argv.player) lobby.player = parsePlayer(argv.player)
     if (argv.at) lobby.at = parseAt(argv.at, process.env.TZ, utcToZonedTime, zonedTimeToUtc)
-    lobby.calledAt = utcToZonedTime(new Date(), process.env.TZ)
+    lobby.calledAt = new Date().getTime()
     lobby.status = "waiting"
     lobby.participants = []
     return lobby
