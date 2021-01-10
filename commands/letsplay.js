@@ -9,13 +9,13 @@ const defaultExpire = 86400000 // default 24 hours expiration
 
 const guildOnly = true
 
-exports.command = "/letsplay [game] [player] [at]"
+const command = "/letsplay [game] [player] [at]"
 
-exports.aliases = "/p"
+const aliases = "/p"
 
-exports.describe = "Start a matchmaking for a game"
+const describe = "Start a matchmaking for a game"
 
-exports.builder = {
+const builder = {
     game: {
         requiresArg: true,
         nargs: 1, // currently support only 1 game
@@ -36,7 +36,7 @@ exports.builder = {
     },
 }
 
-exports.handler = function (argv) {
+function handler(argv) {
     // handler called when command parsed
     if (!allowExecute(argv, guildOnly)) {
         return
@@ -68,7 +68,7 @@ async function execute(argv) {
     }
 }
 
-exports.createLobby = function (argv) {
+function createLobby(argv) {
     // channelId needed
     const lobby = {}
     if (argv.game) lobby.game = parseGame(argv.game)
@@ -189,7 +189,7 @@ async function addLobby(lobby, guildId) {
     }
 }
 
-exports.parseGame = function (gameOption) {
+function parseGame(gameOption) {
     return gameOption
 }
 
@@ -211,7 +211,7 @@ exports.parseGame = function (gameOption) {
  * 4+
  * 4-6
  */
-exports.parsePlayer = function (playerOption) {
+function parsePlayer(playerOption) {
     const re = /^([1-9]\d*)(\+|-([1-9]\d*))?$/
     const match = playerOption.match(re)
     if (!match) {
@@ -251,7 +251,7 @@ exports.parsePlayer = function (playerOption) {
  * supported format (in 24-hour):
  * H:mm / HH:mm / HHmm / Hmm / HH / H
  */
-exports.parseAt = function (atOption, timezone, utcToZoned, zonedToUtc) {
+function parseAt(atOption, timezone, utcToZoned, zonedToUtc) {
     const re = /^(\d{1,2}):?(\d{2})?$/
     const match = atOption.match(re)
     if (!match) {
@@ -285,3 +285,5 @@ exports.parseAt = function (atOption, timezone, utcToZoned, zonedToUtc) {
     at.deadline = utcDeadline.getTime()
     return at
 }
+
+module.exports = { command, aliases, describe, builder, handler, createLobby, parseGame, parsePlayer, parseAt }
