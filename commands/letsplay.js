@@ -46,30 +46,38 @@ exports.handler = function (argv) {
 
 async function execute(argv) {
     try {
-        const lobby = {}
-        if (argv.game) lobby.game = parseGame(argv.game)
-        if (argv.player) lobby.player = parsePlayer(argv.player)
-        if (argv.at) lobby.at = parseAt(argv.at)
-        lobby.calledAt = utcToZonedTime(new Date(), process.env.TZ)
-        lobby.status = "waiting"
-        lobby.participants = []
+        // create lobby object
+        const lobby = createLobby(argv)
+        console.log(lobby)
 
+        // send a new lobby message
         const lobbyMessage = await argv.message.channel.send(newLobbyMessage(argv.message, lobby))
         lobbyMessage.react("✅")
 
         // TODO: create scheduled reminder?
+        // collect reaction
         const timeRemain = lobby.at ? lobby.at.deadline - utcToZonedTime(new Date(), process.env.TZ) : null
-
-        console.log(lobby)
-
         collectReaction(lobbyMessage, timeRemain, lobby.player)
 
-        const guildId = argv.message.guild.id
-        lobby.id = lobbyMessage.id
+        // save lobby details to guild file
         await addLobby(lobby, guildId)
     } catch (err) {
         argv.message.reply(err.message)
     }
+}
+
+exports.createLobby = function (argv) {
+    // channelId needed
+    const guildId = argv.message.guild.id
+    const lobby = {}
+    lobby.id = lobbyMessage.id
+    if (argv.game) lobby.game = parseGame(argv.game)
+    if (argv.player) lobby.player = parsePlayer(argv.player)
+    if (argv.at) lobby.at = parseAt(argv.at, process.env.TZ)
+    lobby.calledAt = utcToZonedTime(new Date(), process.env.TZ)
+    lobby.status = "waiting"
+    lobby.participants = []
+    return lobby
 }
 
 function newLobbyMessage(message, lobby) {
@@ -181,7 +189,7 @@ async function addLobby(lobby, guildId) {
     }
 }
 
-function parseGame(gameOption) {
+exports.parseGame = function (gameOption) {
     return gameOption
 }
 
@@ -203,7 +211,7 @@ function parseGame(gameOption) {
  * 4+
  * 4-6
  */
-function parsePlayer(playerOption) {
+exports.parsePlayer = function (playerOption) {
     const re = /^([1-9]\d*)(\+|-([1-9]\d*))?$/
     const match = playerOption.match(re)
     if (!match) {
@@ -243,7 +251,7 @@ function parsePlayer(playerOption) {
  * supported format (in 24-hour):
  * H:mm / HH:mm / HHmm / Hmm / HH / H
  */
-function parseAt(atOption) {
+exports.parseAt = function (atOption, timezone) {
     const re = /^(\d{1,2}):?(\d{2})?$/
     const match = atOption.match(re)
     if (!match) {
@@ -260,10 +268,10 @@ function parseAt(atOption) {
     }
     const at = {}
     at.display = hour.padStart(2, "0") + ":" + (minute ? minute : "00")
-    let deadline = utcToZonedTime(new Date(), process.env.TZ)
+    let deadline = utcToZonedTime(new Date(), timezone)
     deadline.setHours(hour)
     deadline.setMinutes(minute)
-    if (deadline < utcToZonedTime(new Date(), process.env.TZ)) {
+    if (deadline < utcToZonedTime(new Date(), timezone)) {
         deadline.setDate(deadline.getDate() + 1)
     }
     at.deadline = deadline.getTime()

@@ -1,28 +1,28 @@
 {
-    "name": "another-discord-bot",
-    "version": "1.0.1",
-    "description": "Yet another discord bot",
-    "main": "index.js",
-    "scripts": {
-        "dev": "nodemon ./index",
-        "prod": "node ./index",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "nodemonConfig": {
-        "ignore": [
-            "guilds/*"
-        ]
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "date-fns-tz": "^1.0.12",
-        "discord.js": "^12.5.1",
-        "dotenv": "^8.2.0",
-        "yargs": "^16.2.0"
-    },
-    "devDependencies": {
-        "jest": "^26.6.3",
-        "nodemon": "^2.0.7"
-    }
+  "name": "another-discord-bot",
+  "version": "1.0.1",
+  "description": "Yet another discord bot",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./index",
+    "prod": "node ./index",
+    "test": "jest"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "guilds/*"
+    ]
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "date-fns-tz": "^1.0.12",
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7"
+  }
 }
